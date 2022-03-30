@@ -11,7 +11,7 @@ out					:= run
 run: build
 	./$(out)
 
-build: obj/main.o obj/window.o obj/tree.o
+build: obj/main.o obj/window.o obj/tree.o obj/gl.o
 	$(CC) $(LARGS) -o $(out) $^ $(LIBS)
 
 obj/main.o: src/main.cpp
@@ -21,4 +21,7 @@ obj/window.o: src/window.cpp include/window.hpp
 	$(CC) $(CARGS) $(INCLUDE_PATHS)  -o $@ $<
 
 obj/tree.o: src/tree.cpp include/tree.hpp
+	$(CC) $(CARGS) $(INCLUDE_PATHS)  -o $@ $<
+
+obj/gl.o: src/gl.cpp include/gl.hpp
 	$(CC) $(CARGS) $(INCLUDE_PATHS)  -o $@ $<
