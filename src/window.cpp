@@ -6,6 +6,14 @@ bool window::_isInit = window::init();
 bool window::create(int width, int heigth, std::string title){
     destroy();
     _window = glfwCreateWindow(width, heigth, title.c_str(), NULL, NULL);
+    if(_window){
+        glfwSetWindowSizeCallback(_window, [](GLFWwindow *window,int width, int height){
+            glfwMakeContextCurrent(window);
+            glViewport(0,0, width, height);
+        });
+
+
+    }
 
     return _window;
 }
@@ -38,7 +46,7 @@ void window::start_event_loop(){
     {
         glfwMakeContextCurrent(_window);
         glfwPollEvents();
-        
+
         if(_on_update) _on_update();
         if(_on_render) _on_render();
 
