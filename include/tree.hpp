@@ -5,73 +5,40 @@
 #include <math.h>
 #include <glm/vec2.hpp>
 
-
-class tree;
-class value;
-class body_interpolator;
-class default_body_interpolator;
+#include <data_tree.hpp>
 
 
-template <typename T>
-class data_tree{
-    private:
-        T _value;
-        std::vector<data_tree> _child;
-    public:
-        data_tree(T root_value){
-            _value = root_value;
-        }
+class tree_parent_branch_info{
+public:
+    float end_widthwidth;//value in range [0, 1]
+    float length_to_branch;//value in range [0, 1]
+    float angle;//value in range [0, 1]
+};
 
-        void add_child(data_tree<T> child){
-            _child.push_back(child);
-        }
+class tree_child_branch_info{
+public:
+    float end_width;
+    float branch_length;
+    float angle;
+};
 
-        T get_value(){
-            return _value;
-        }
-
-        size_t get_length(){
-            return _child.size();
-        }
-
-        data_tree<T> operator[] (size_t index){
-            return _child[index];
-        }
-    };
+class tree_branch{
+public:
+    float width_from;//value in range [0, 1]
+    float width_to;//value in range [0, 1]
+    float branch_length;//value in range [0, 1]
+    float length_to_branch;//value in range [0, 1]
+    float angle;//value in range [0, 1]
+};
 
 class tree{
 public:
-    tree();
-    void init(float height, const body_interpolator *interpolator);
+    tree(tree_branch root);
+    void init();
+    virtual std::vector<tree_child_branch_info> create_sub_branches(tree_parent_branch_info parent) const = 0;
+    data_tree<tree_branch> get_root() const;
 
-    data_tree<glm::vec2> get_frame() const;
 private:
-    float _height;
-    void init_frame(const body_interpolator *interpolator);
-    data_tree<glm::vec2> _frame;
-};
-
-//height is value in range {0, 1}
-//body_width is value in range {0, 1}
-//branches_spread is value in range {0, 1}
-class value{
-public:
-    int branches_count;
-    float body_width;
-    float branches_spread;
-private:
-};
-
-class body_interpolator{
-public:
-    virtual value get_value(value prev, float height) const = 0;
-};
-
-
-class default_body_interpolator: public body_interpolator{
-public:
-    default_body_interpolator(value initValue);
-    virtual value get_value(const value prev, float height) const;
-private:
-    value _initValue;
+    void init_branch(data_tree<tree_branch> *parent) const;
+    data_tree<tree_branch> _root;
 };

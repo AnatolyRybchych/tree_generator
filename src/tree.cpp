@@ -1,39 +1,47 @@
 #include <tree.hpp>
 
-tree::tree():_frame(glm::vec2(0, -1)){
 
+tree::tree(tree_branch root): _root(root){
 }
 
-void tree::init(float height, const body_interpolator *interpolator){
-    _height = height;
-    init_frame(interpolator);
-}
+void tree::init_branch(data_tree<tree_branch> *parent) const{
+    tree_branch branch = parent->get_value();
+    float all_branch_len = branch.length_to_branch + branch.branch_length;
+    std::vector<tree_child_branch_info> sub_branches = create_sub_branches(
+        (tree_parent_branch_info){
+            .angle = branch.angle,
+            .end_widthwidth = branch.width_to,
+            .length_to_branch = all_branch_len,
+        }
+    );
 
-void tree::init_frame(const body_interpolator *interpolator){
-    value val;
-    for (float h = 0; h < _height; h+= 0.01){
-        val = interpolator->get_value(val, h);
+    for(auto child_info:sub_branches){
+        data_tree<tree_branch> child(
+            (tree_branch){
+                .angle = (branch.angle * child_info.branch_length) / (child_info.branch_length + all_branch_len)
+                + (child_info.angle * all_branch_len) / (child_info.branch_length + all_branch_len),
+
+                .branch_length = child_info.branch_length + all_branch_len,
+
+                .length_to_branch = all_branch_len,
+
+                .width_from = branch.width_to,
+
+                .width_to = child_info.end_width,
+            }
+        );
+
+        parent->add_child(child);
+
+        init_branch(&child);
     }
-    
 }
 
-data_tree<glm::vec2> tree::get_frame() const{
-    return _frame;
-}
-
-
-default_body_interpolator::default_body_interpolator(value initValue){
-    _initValue = _initValue;
-}
-
-value default_body_interpolator::get_value(value prev, float height) const{
-    if(height == 0) return _initValue;
-
-    value res = prev;
-
-    res.branches_count = int(powf(height, 3) * 10);
-
-    return res;
+void tree::init(){
+    init_branch(&_root);
 }
 
 
+data_tree<tree_branch> tree::get_root() const{
+    return _root;
+}

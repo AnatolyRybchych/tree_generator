@@ -1,10 +1,30 @@
 #include <iostream>
+#include <fstream>
+#include <string.h>
 
 #include <window.hpp>
 #include <gl.hpp>
 #include <tree.hpp>
 
 using namespace std;
+
+string read_all_file(string file){
+    ifstream source(file);
+
+    if(!source.is_open()){
+        fprintf(stderr, "ERROR: %s \"%s\"\n", "cannot open file", file.c_str());
+        return "";
+    }
+
+    source.seekg(0,ios::end);
+    size_t file_size = source.tellg();
+    source.seekg(0, ios::beg);
+
+    string res(file_size, ' ');
+    source.read(&res[0], file_size);
+
+    return res;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -15,37 +35,9 @@ int main(int argc, char const *argv[])
 
     std::vector<glm::vec2> vertices;
 
-    vertices.push_back(glm::vec2(1, 1));
-    vertices.push_back(glm::vec2(-1, -1));
-
-    tree test;
-
-    default_body_interpolator interpolator((value){
-        .body_width = 0.2,
-        .branches_spread = 0.2,
-    });
-    test.init(1, &interpolator);
-
     window.initWithGlContex([&](){
-        shader frag(GL_FRAGMENT_SHADER, 
-        R"shader(
-
-            varying vec2 FragPos;
-
-            void main(){
-                gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-            }
-        )shader");
-        shader vert(GL_VERTEX_SHADER, 
-        R"shader(
-            attribute vec4 VertPos;
-            varying vec2 FragPos;
-
-            void main() {
-                gl_Position = VertPos;
-                FragPos = VertPos.xy;
-            }
-        )shader");
+        shader frag(GL_FRAGMENT_SHADER, read_all_file("frag.glsl"));
+        shader vert(GL_VERTEX_SHADER, read_all_file("vert.glsl"));
         prog = new program(frag, vert);
 
         if(!prog->is_linked()){
