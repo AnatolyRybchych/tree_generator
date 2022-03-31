@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <functional>
 #include <vector>
 #include <math.h>
@@ -36,9 +37,9 @@ public:
     tree(tree_branch root);
     void init();
     virtual std::vector<tree_child_branch_info> create_sub_branches(tree_parent_branch_info parent) const = 0;
-    data_tree<tree_branch> get_root() const;
+    data_tree<tree_branch> root;
 
 private:
     void init_branch(data_tree<tree_branch> *parent) const;
-    data_tree<tree_branch> _root;
+    
 };

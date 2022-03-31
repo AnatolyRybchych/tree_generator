@@ -5,8 +5,43 @@
 #include <window.hpp>
 #include <gl.hpp>
 #include <tree.hpp>
+#include <glm/ext/scalar_constants.hpp>
+
+#define RANDF ((rand() % 10000) / 10000.0)
 
 using namespace std;
+
+class test_tree: public tree{
+    public:
+    test_tree(tree_branch root):tree(root){}
+
+    std::vector<tree_child_branch_info> create_sub_branches(tree_parent_branch_info parent) const override{
+        std::vector<tree_child_branch_info> res;
+
+        int count_childs = 1;
+        if(rand() % 5 == 0){
+            count_childs += (int)(RANDF * 4.0);
+        }
+
+        float node_width = (1.0 - parent.length_to_branch) * 0.1;
+        for (size_t i = 0; i < count_childs; i++) {
+            float width = node_width * (RANDF * 0.8 + 0.2);
+
+            if(i == count_childs - 1) width = node_width;
+            node_width -= width;
+
+            tree_child_branch_info child = {
+                .end_width = width,
+                .branch_length = 0.09,
+                .angle = parent.angle + (float)((RANDF - 0.45f) * 0.6f),
+            };
+
+            res.push_back(child);
+        }
+        
+        return res;
+    }
+};
 
 string read_all_file(string file){
     ifstream source(file);
@@ -26,6 +61,26 @@ string read_all_file(string file){
     return res;
 }
 
+void init_tree_frame(std::vector<glm::vec2> *lineVertices, data_tree<tree_branch> *root_branch, glm::vec2 pos){
+    auto root = root_branch->get_value();
+    for (size_t i = 0; i < root_branch->get_length(); i++){
+        auto child_branch = (*root_branch)[i];
+        auto child = child_branch.get_value();
+
+        glm::vec2 dstpos(
+            child.branch_length * sinf(glm::pi<float>() * child.angle),
+            child.branch_length * cosf(glm::pi<float>() * child.angle)
+        );
+
+        dstpos += pos;
+
+        lineVertices->push_back(pos);
+        lineVertices->push_back(dstpos);
+
+        init_tree_frame(lineVertices, &child_branch, dstpos);
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     program *prog;
@@ -34,6 +89,20 @@ int main(int argc, char const *argv[])
     window.create(800, 600, "window");
 
     std::vector<glm::vec2> vertices;
+
+    test_tree ttree((tree_branch){
+        .width_from = 0.1,
+        .width_to = 0.095,
+        .branch_length = 0.05,
+        .length_to_branch = 0,
+        .angle = 0.0,
+    });
+
+    ttree.init();
+
+    auto ttree_root = ttree.root;
+    init_tree_frame(&vertices, &ttree_root, glm::vec2(0, -1));
+    
 
     window.initWithGlContex([&](){
         shader frag(GL_FRAGMENT_SHADER, read_all_file("frag.glsl"));
