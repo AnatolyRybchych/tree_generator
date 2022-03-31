@@ -21,6 +21,7 @@ public:
     void start_event_loop();
     void set_render_handler(std::function<void()> handler);
     void set_update_handler(std::function<void()> handler);
+    void set_mouse_handler(void (*handler)(GLFWwindow *glfw_window, int m_button, int state, int));
 
 
 private:

@@ -37,6 +37,10 @@ void window::set_update_handler(std::function<void()> handler){
     _on_update = handler;
 }
 
+void window::set_mouse_handler(void (*handler)(GLFWwindow *glfw_window, int m_button, int state, int)){
+    glfwSetMouseButtonCallback(_window, handler);
+}
+
 window::window():_window(NULL)
 {
 }

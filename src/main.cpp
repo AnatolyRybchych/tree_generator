@@ -19,7 +19,7 @@ class test_tree: public tree{
         std::vector<tree_child_branch_info> res;
 
         int count_childs = 1;
-        if(rand() % 5 == 0){
+        if(rand() % 20 == 0){
             count_childs += (int)(RANDF * 4.0);
         }
 
@@ -32,7 +32,7 @@ class test_tree: public tree{
 
             tree_child_branch_info child = {
                 .end_width = width,
-                .branch_length = 0.09,
+                .branch_length = 0.05,
                 .angle = parent.angle + (float)((RANDF - 0.45f) * 0.6f),
             };
 
@@ -61,26 +61,7 @@ string read_all_file(string file){
     return res;
 }
 
-void init_tree_frame(std::vector<glm::vec2> *lineVertices, data_tree<tree_branch> *root_branch, glm::vec2 pos){
-    auto root = root_branch->get_value();
-    for (size_t i = 0; i < root_branch->get_length(); i++){
-        auto child_branch = (*root_branch)[i];
-        auto child = child_branch.get_value();
-
-        glm::vec2 dstpos(
-            child.branch_length * sinf(glm::pi<float>() * child.angle),
-            child.branch_length * cosf(glm::pi<float>() * child.angle)
-        );
-
-        dstpos += pos;
-
-        lineVertices->push_back(pos);
-        lineVertices->push_back(dstpos);
-
-        init_tree_frame(lineVertices, &child_branch, dstpos);
-    }
-}
-
+std::vector<glm::vec2> vertices;
 int main(int argc, char const *argv[])
 {
     program *prog;
@@ -88,20 +69,21 @@ int main(int argc, char const *argv[])
     window window;
     window.create(800, 600, "window");
 
-    std::vector<glm::vec2> vertices;
+    window.set_mouse_handler([](GLFWwindow * w, int m_button, int state, int){
+        if(m_button == 0 && state == 1)
+        {
+            test_tree ttree((tree_branch){
+                .width_from = 0.1,
+                .width_to = 0.095,
+                .branch_length = 0.05,
+                .length_to_branch = 0,
+                .angle = 0.0,
+            });
 
-    test_tree ttree((tree_branch){
-        .width_from = 0.1,
-        .width_to = 0.095,
-        .branch_length = 0.05,
-        .length_to_branch = 0,
-        .angle = 0.0,
+            ttree.init();
+            vertices = ttree.triangulate();
+        }
     });
-
-    ttree.init();
-
-    auto ttree_root = ttree.root;
-    init_tree_frame(&vertices, &ttree_root, glm::vec2(0, -1));
     
 
     window.initWithGlContex([&](){
@@ -136,7 +118,7 @@ int main(int argc, char const *argv[])
         GLint vert_pos = glGetAttribLocation(prog->get_id(), "VertPos");
         glEnableVertexAttribArray(vert_pos);
         glVertexAttribPointer(vert_pos, 2, GL_FLOAT, false, 0, vertices.data());
-        glDrawArrays(GL_LINES, 0, vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     });
 
 

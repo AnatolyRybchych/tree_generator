@@ -14,15 +14,15 @@ public:
         _child.push_back(child);
     }
 
-    T get_value(){
+    T get_value() const{
         return _value;
     }
 
-    size_t get_length(){
+    size_t get_length() const{
         return _child.size();
     }
     
-    data_tree<T> operator[] (size_t index){
+    data_tree<T> operator[] (size_t index) const{
         return _child[index];
     }
 };
