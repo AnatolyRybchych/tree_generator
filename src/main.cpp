@@ -47,7 +47,7 @@ class test_tree: public tree{
             tree_child_branch_info child = {
                 .end_width = width,
                 .branch_length = 0.05,
-                .angle = parent.angle + (float)((RANDF - 0.45f) * 0.6f),
+                .angle = parent.angle + (float)((RANDF - 0.45f) * 0.6f) * (float)(1.1 - (1.0 / (1.0 + parent.generation))),
                 .generation = generation,
             };
 
