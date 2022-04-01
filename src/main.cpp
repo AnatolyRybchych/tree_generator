@@ -97,6 +97,10 @@ int main(int argc, char const *argv[])
 
             ttree.init();
             vertices = ttree.triangulate_root();
+
+            for(int v = 0; v < vertices.size(); v ++){
+                vertices[v] = vertices[v] * glm::vec2(2.0, 2.0) + glm::vec2(0, -1.0) ;
+            }
         }
     });
     
