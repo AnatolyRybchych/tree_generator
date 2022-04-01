@@ -41,12 +41,12 @@ public:
     tree(tree_branch root);
     void init();
     virtual std::vector<tree_child_branch_info> create_sub_branches(tree_parent_branch_info parent) const = 0;
-    virtual std::vector<glm::vec2> triangulate_root() const;
+    virtual std::vector<glm::vec2> triangulate_root();
     data_tree<tree_branch> root;
 
 private:
     void init_branch(data_tree<tree_branch> *parent) const;
-    void triangulate_branch(std::vector<glm::vec2> *lineVertices, const data_tree<tree_branch> *root_branch, 
+    void triangulate_branch(std::vector<glm::vec2> *lineVertices, data_tree<tree_branch> *root_branch, 
         glm::vec2 pos, glm::vec2 root_bg_p1, glm::vec2 root_bg_p2) const;
     
 };

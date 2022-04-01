@@ -4,15 +4,15 @@
 tree::tree(tree_branch root): root(root){
 }
 
-std::vector<glm::vec2> tree::triangulate_root() const{
+std::vector<glm::vec2> tree::triangulate_root(){
     std::vector<glm::vec2> res;
     float root_top_width = root.get_value().width_from;
     triangulate_branch(&res, &root, glm::vec2(0, 0), 
         glm::vec2(-root_top_width * 0.5, 0), glm::vec2(root_top_width * 0.5, 0));
-    return res;
+    return res; 
 }
 
-void tree::triangulate_branch(std::vector<glm::vec2> *lineVertices, const data_tree<tree_branch> *root_branch, 
+void tree::triangulate_branch(std::vector<glm::vec2> *lineVertices, data_tree<tree_branch> *root_branch, 
 glm::vec2 pos, glm::vec2 root_bg_p1, glm::vec2 root_bg_p2) const{
     auto root = root_branch->get_value();
     for (size_t i = 0; i < root_branch->get_length(); i++){
@@ -79,7 +79,12 @@ void tree::init_branch(data_tree<tree_branch> *parent) const{
             }
         );
 
-        if((all_branch_len + child_info.branch_length) > 1.0) continue;        
+        if((all_branch_len + child_info.branch_length) > 1.0) {
+            child.get_value().width_to = 0;
+            parent->add_child(child);
+            continue; 
+        }
+               
 
         init_branch(&child);
         parent->add_child(child);
