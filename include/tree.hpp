@@ -12,28 +12,28 @@
 
 class tree_parent_branch_info{
 public:
-    float end_widthwidth;//value in range [0, 1]
-    float length_to_branch;//value in range [0, 1]
-    float angle;//value in range [0, 1]
-    int generation;
+    float end_width;//value in range [0, 1]
+    float length_to_branch;//value in range [0, 1]  // length from start of tree root to branch end 
+    float angle;//value in range [0, 1] //general angle of branch (makes smoother)
+    int generation;//custom //can be used to create direct dependency between parent nad children branches 
 };
 
 class tree_child_branch_info{
 public:
-    float end_width;
-    float branch_length;
-    float angle;
-    int generation;
+    float end_width;//value in range [0, 1] // width current branch axis end 
+    float branch_length;//value in range [0, 1] // length from start of cuerrent branch to end of current branch
+    float angle;//value in range [0, 1] //angle between parent and children branch
+    int generation;//custom //can be used to create direct dependency between parent nad children branches 
 };
 
 class tree_branch{
 public:
-    float width_from;//value in range [0, 1]
-    float width_to;//value in range [0, 1]
-    float branch_length;//value in range [0, 1]
-    float length_to_branch;//value in range [0, 1]
-    float angle;//value in range [0, 1]
-    int generation;
+    float width_from;//value in range [0, 1] // width current branch axis start 
+    float width_to;//value in range [0, 1] // width current branch axis end 
+    float branch_length;//value in range [0, 1] // length from start of cuerrent branch to end of current branch
+    float length_to_branch;//value in range [0, 1] // length from start of tree root to start of current branch 
+    float angle;//value in range [0, 1] // angle of current branch axis 
+    int generation;//custom //can be used to create direct dependency between parent nad children branches 
 };
 
 class tree{
@@ -41,7 +41,7 @@ public:
     tree(tree_branch root);
     void init();
     virtual std::vector<tree_child_branch_info> create_sub_branches(tree_parent_branch_info parent) const = 0;
-    std::vector<glm::vec2> triangulate() const;
+    virtual std::vector<glm::vec2> triangulate_root() const;
     data_tree<tree_branch> root;
 
 private:

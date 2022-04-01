@@ -96,7 +96,7 @@ int main(int argc, char const *argv[])
             });
 
             ttree.init();
-            vertices = ttree.triangulate();
+            vertices = ttree.triangulate_root();
         }
     });
     

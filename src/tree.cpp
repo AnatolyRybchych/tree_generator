@@ -4,7 +4,7 @@
 tree::tree(tree_branch root): root(root){
 }
 
-std::vector<glm::vec2> tree::triangulate() const{
+std::vector<glm::vec2> tree::triangulate_root() const{
     std::vector<glm::vec2> res;
     float root_top_width = root.get_value().width_from;
     triangulate_branch(&res, &root, glm::vec2(0, 0), 
@@ -59,7 +59,7 @@ void tree::init_branch(data_tree<tree_branch> *parent) const{
     float all_branch_len = branch.length_to_branch + branch.branch_length;
     std::vector<tree_child_branch_info> sub_branches = create_sub_branches(
         (tree_parent_branch_info){
-            .end_widthwidth = branch.width_to,
+            .end_width = branch.width_to,
             .length_to_branch = all_branch_len,
             .angle = branch.angle,
             .generation = branch.generation,
