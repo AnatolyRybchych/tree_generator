@@ -19,8 +19,14 @@ class test_tree: public tree{
         std::vector<tree_child_branch_info> res;
 
         int count_childs = 1;
-        if(rand() % 20 == 0){
-            count_childs += (int)(RANDF * 4.0);
+
+        if(parent.length_to_branch < 0.25){
+            count_childs = 1;
+        }
+        else{
+            if(rand() % ((parent.generation + 1) * 5) == 0){
+                count_childs += (int)(RANDF * 4.0);
+            }
         }
 
         float node_width = (1.0 - parent.length_to_branch) * 0.1;
@@ -30,10 +36,19 @@ class test_tree: public tree{
             if(i == count_childs - 1) width = node_width;
             node_width -= width;
 
+            int generation;
+            if(i == count_childs - 1){
+                generation = parent.generation;
+            }
+            else{
+                generation = parent.generation + i + 1;
+            }
+
             tree_child_branch_info child = {
                 .end_width = width,
                 .branch_length = 0.05,
                 .angle = parent.angle + (float)((RANDF - 0.45f) * 0.6f),
+                .generation = generation,
             };
 
             res.push_back(child);

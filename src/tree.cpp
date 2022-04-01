@@ -62,6 +62,7 @@ void tree::init_branch(data_tree<tree_branch> *parent) const{
             .end_widthwidth = branch.width_to,
             .length_to_branch = all_branch_len,
             .angle = branch.angle,
+            .generation = branch.generation,
         } 
     );
 
@@ -74,6 +75,7 @@ void tree::init_branch(data_tree<tree_branch> *parent) const{
                 .length_to_branch = all_branch_len,
                 .angle = (branch.angle * child_info.branch_length) / (child_info.branch_length + all_branch_len)
                 + (child_info.angle * all_branch_len) / (child_info.branch_length + all_branch_len),
+                .generation = child_info.generation,
             }
         );
 

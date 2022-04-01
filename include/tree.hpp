@@ -15,6 +15,7 @@ public:
     float end_widthwidth;//value in range [0, 1]
     float length_to_branch;//value in range [0, 1]
     float angle;//value in range [0, 1]
+    int generation;
 };
 
 class tree_child_branch_info{
@@ -22,6 +23,7 @@ public:
     float end_width;
     float branch_length;
     float angle;
+    int generation;
 };
 
 class tree_branch{
@@ -31,6 +33,7 @@ public:
     float branch_length;//value in range [0, 1]
     float length_to_branch;//value in range [0, 1]
     float angle;//value in range [0, 1]
+    int generation;
 };
 
 class tree{
